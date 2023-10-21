@@ -16,8 +16,9 @@ namespace FSEProject2.Controllers
             var dayOfWeek = actualDate.DayOfWeek;
             List<UserOnline> relevantData = usersData.FindAll(x => x.date.DayOfWeek == dayOfWeek && x.date.Hour == actualDate.Hour);
             var usersCounts = relevantData.GroupBy(x => x.date).Select(g => g.Count()).ToList();
-            var averageUsers = (int)usersCounts.Average();
+            if(usersCounts.Count == 0) return new PredictionData { onlineUsers = null };
 
+            var averageUsers = (int)usersCounts.Average();
             return new PredictionData { onlineUsers = averageUsers };
         }
 
