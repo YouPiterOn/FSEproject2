@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FSEProject2.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FSEProject2.Controllers
@@ -13,30 +14,20 @@ namespace FSEProject2.Controllers
         public ActionResult<PredictionData> PredictUsersOnline(string date)
         {
             var actualDate = DateTime.ParseExact(date, "yyyy-dd-MM-HH:mm", null);
-            var dayOfWeek = actualDate.DayOfWeek;
-            List<UserOnline> relevantData = usersData.FindAll(x => x.date.DayOfWeek == dayOfWeek && x.date.Hour == actualDate.Hour);
-            var usersCounts = relevantData.GroupBy(x => x.date).Select(g => g.Count()).ToList();
-            if(usersCounts.Count == 0) return new PredictionData { onlineUsers = null };
+            var response = Predictions.PredictUsersOnline(actualDate);
 
-            var averageUsers = (int)usersCounts.Average();
-            return new PredictionData { onlineUsers = averageUsers };
+            if (response == null) { return NotFound(); }
+            return response;
         }
 
         [HttpGet("user")]
         public ActionResult<UserPredictionData> PredictUserOnline(string date, double tolerance, string userId)
         {
             var actualDate = DateTime.ParseExact(date, "yyyy-dd-MM-HH:mm", null);
-            var dayOfWeek = actualDate.DayOfWeek;
+            var response = Predictions.PredictUserOnline(actualDate, tolerance, userId);
 
-            var userOnlineData = usersData.FindAll(u => u.user.userId == userId);
-
-            if (userOnlineData.Count == 0) return NotFound();
-
-            var totalWeeks = (int)(actualDate.Subtract(userOnlineData.Min(x => x.date)).TotalDays / 7);
-            var timesUserWasOnline = userOnlineData.Count(x => x.date.DayOfWeek == dayOfWeek && x.date.Hour == actualDate.Hour);
-            var onlineChance = timesUserWasOnline / totalWeeks;
-
-            return new UserPredictionData { willBeOnline = onlineChance >= tolerance, onlineChance = onlineChance };
+            if (response == null) { return NotFound(); }
+            return response;
         }
     }
 }

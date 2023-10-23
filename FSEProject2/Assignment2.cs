@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Numerics;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
-using FSEProject2;
+using FSEProject2.Models;
 
 namespace FSEProject2
 {
@@ -91,7 +91,7 @@ namespace FSEProject2
             if (timeSpan.TotalDays < 7) return "this week";
             return "a long time ago";
         }
-        public static string CreateOutput(UsersData user, string Language)
+        public static string CreateOutput(User user, string Language)
         {
             if (user.lastSeenDate == null)
                 return $"{user.nickname} {Languages[Language]["was online"]} {Languages[Language]["a long time ago"]}.";

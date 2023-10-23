@@ -6,22 +6,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using FSEProject2.Models;
 
 namespace FSEProject2.Controllers.Tests
 {
     [TestClass()]
     public class StatsControllerTests
     {
-        private List<UserOnline> sampleData = new List<UserOnline>
+        private List<User> sampleData = new List<User>
         {
-            new UserOnline { user = new UsersData { userId = "1" }, date = DateTime.ParseExact("2023-01-01-12:00", "yyyy-dd-MM-HH:mm", null) },
-            new UserOnline { user = new UsersData { userId = "2" }, date = DateTime.ParseExact("2023-01-01-12:00", "yyyy-dd-MM-HH:mm", null) },
+            new User { userId = "1", wasOnline = new List<DateTime>(){ DateTime.ParseExact("2023-01-01-12:00", "yyyy-dd-MM-HH:mm", null) } },
+            new User { userId = "2", wasOnline = new List<DateTime>(){ DateTime.ParseExact("2023-01-01-12:00", "yyyy-dd-MM-HH:mm", null) } },
         };
 
         [TestMethod()]
         public void GetUsersOnline_CorrectCount()
         {
-            var test = new StatsController() { usersData = sampleData };
+            var test = new StatsController();
+            Data.Users = sampleData;
+
             var expected = 2;
 
             var result = test.GetUsersOnline("2023-01-01-12:00");
@@ -31,7 +34,8 @@ namespace FSEProject2.Controllers.Tests
         [TestMethod()]
         public void GetUsersOnline_Null()
         {
-            var test = new StatsController() { usersData = sampleData };
+            var test = new StatsController();
+            Data.Users = sampleData;
 
             var result = test.GetUsersOnline("2023-01-01-13:00");
 
@@ -41,7 +45,8 @@ namespace FSEProject2.Controllers.Tests
         [TestMethod()]
         public void GetUserStats_NotFound()
         {
-            var test = new StatsController() { usersData = sampleData };
+            var test = new StatsController();
+            Data.Users = sampleData;
 
             var result = test.GetUserStats("2023-01-01-12:00", "3");
 
@@ -51,7 +56,9 @@ namespace FSEProject2.Controllers.Tests
         [TestMethod()]
         public void GetUserStats_WasOnline()
         {
-            var test = new StatsController() { usersData = sampleData };
+            var test = new StatsController();
+            Data.Users = sampleData;
+
             var result = test.GetUserStats("2023-01-01-12:00", "1");
 
             Assert.IsTrue(result.Value.wasUserOnline.Value);
@@ -61,7 +68,9 @@ namespace FSEProject2.Controllers.Tests
         [TestMethod()]
         public void GetUserStats_WasOffline()
         {
-            var test = new StatsController() { usersData = sampleData };
+            var test = new StatsController();
+            Data.Users = sampleData;
+
             var result = test.GetUserStats("2023-01-01-13:00", "1");
             var expected = DateTime.ParseExact("2023-01-01-12:00", "yyyy-dd-MM-HH:mm", null);
 
