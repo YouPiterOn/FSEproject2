@@ -30,5 +30,23 @@ namespace FSEProject2.Controllers
             if (response == null) { return NotFound(); }
             return response;
         }
+
+        [HttpGet("user/total")]
+        public ActionResult<UserTimeData> GetUserTimeData(string userId)
+        {
+            var response = Stats.GetUserTimeData(userId);
+
+            if (response == null) { return NotFound(); }
+            return response;
+        }
+
+        [HttpGet("user/average")]
+        public ActionResult<UserAverageTime> GetUserAverageTimeOnline(string userId)
+        {
+            var response = Stats.GetUserAverageTimeOnline(userId);
+
+            if (response == null) { return NotFound(); }
+            return response;
+        }
     }
 }

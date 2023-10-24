@@ -8,6 +8,7 @@ namespace FSEProject2.Models
         public string? userId { get; set; }
         public DateTime? lastSeenDate { get; set; }
         public List<DateTime>? wasOnline { get; set; }
+        public List<PeriodOnline>? periodsOnline { get; set; }
     }
 
     public class AllData

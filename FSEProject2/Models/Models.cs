@@ -1,9 +1,9 @@
 ﻿namespace FSEProject2.Models
 {
-    public class UserOnline
+    public class PeriodOnline
     {
-        public User user { get; set; }
-        public DateTime date { get; set; }
+        public DateTime start { get; set; }
+        public DateTime end { get; set; }
     }
     public class HistoricalData
     {
@@ -26,4 +26,20 @@
         public bool willBeOnline { get; set; }
         public double onlineChance { get; set; }
     }
+
+    public class UserTimeData
+    {
+        public double totalTime { get; set; }
+    }
+
+    public class UserAverageTime
+    {
+        public double weeklyAverage { get; set; }
+        public double dailyAverage { get; set; }
+    }
+    public class UserId
+    {
+        public string userId { get; set; }
+    }
 }
+

@@ -29,7 +29,14 @@ namespace FSEProject2.Tests
                 DateTime.ParseExact("2023-17-10-12:00", "yyyy-dd-MM-HH:mm", null) } },
             new User {userId = "2", wasOnline = new List<DateTime>(){ 
                 DateTime.ParseExact("2023-10-10-12:00", "yyyy-dd-MM-HH:mm", null),
-                DateTime.ParseExact("2023-11-10-12:00", "yyyy-dd-MM-HH:mm", null) }}
+                DateTime.ParseExact("2023-11-10-12:00", "yyyy-dd-MM-HH:mm", null) }},
+            new User { userId = "4", periodsOnline = new List<PeriodOnline>{
+                    new PeriodOnline { start = DateTime.Now.AddHours(-1), end = DateTime.Now },
+                    new PeriodOnline { start = DateTime.Now.AddHours(-3), end = DateTime.Now.AddHours(-2) }}},
+            new User { userId = "5", periodsOnline = new List<PeriodOnline>{
+                    new PeriodOnline { start = DateTime.Now.AddHours(-1), end = DateTime.Now },
+                    new PeriodOnline { start = DateTime.Now.AddHours(-25), end = DateTime.Now.AddHours(-24) },
+                    new PeriodOnline { start = DateTime.Now.AddDays(-8), end = DateTime.Now.AddDays(-7) }}}
             };
         }
 
@@ -142,6 +149,73 @@ namespace FSEProject2.Tests
         public async Task GetUserStats_NotFound()
         {
             var response = await _client.GetAsync("/api/stats/user?date=2023-10-10-12:00&userId=3");
+
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
+        }
+        [TestMethod()]
+        public async Task GetUserTimeData_CorrectCount()
+        {
+            var expected = 7200;
+            var response = await _client.GetAsync("/api/stats/user/total?userId=4");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<UserTimeData>(content);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expected, result.totalTime);
+        }
+
+        [TestMethod()]
+        public async Task GetUserTimeData_NotFound()
+        {
+            var response = await _client.GetAsync("/api/stats/user/total?userId=3");
+
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
+        }
+
+        [TestMethod()]
+        public async Task GetUserAverageTimeOnline_CorrectCount()
+        {
+            var expectedWeekly = 46800;
+            var expectedDaily = 31200;
+            var response = await _client.GetAsync("/api/stats/user/average?userId=5");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<UserAverageTime>(content);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedWeekly, result.weeklyAverage);
+            Assert.AreEqual(expectedDaily, result.dailyAverage);
+        }
+
+        [TestMethod()]
+        public async Task GetUserAverageTimeOnline_NotFound()
+        {
+            var response = await _client.GetAsync("/api/stats/user/average?userId=3");
+
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
+        }
+        [TestMethod()]
+        public async Task Forget_CorrectResponse()
+        {
+            var expected = "1";
+            var response = await _client.GetAsync("/api/user/forget?userId=1");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<UserId>(content);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expected, result.userId);
+            Assert.IsFalse(Data.Users.Any(x => x.userId == expected));
+        }
+
+        [TestMethod()]
+        public async Task Forget_NotFound()
+        {
+            var response = await _client.GetAsync("/api/user/forget?userId=3");
 
             Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
         }

@@ -9,9 +9,11 @@ namespace FSEProject2
         {
             List<DateTime> onlineData = new List<DateTime>();
             foreach (var user in Data.Users)
+            {
+                if (user.wasOnline == null) continue;
                 foreach (var dateOnline in user.wasOnline)
                     onlineData.Add(dateOnline);
-
+            }
             var dayOfWeek = date.DayOfWeek;
             var relevantData = onlineData.FindAll(x => x.DayOfWeek == dayOfWeek && x.Hour == date.Hour);
             var usersCounts = relevantData.GroupBy(x => x).Select(g => g.Count()).ToList();

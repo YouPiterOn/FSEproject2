@@ -8,7 +8,6 @@ namespace FSEProject2.Controllers
     [ApiController]
     public class PredictionsController : ControllerBase
     {
-        public List<UserOnline> usersData = new List<UserOnline>();
 
         [HttpGet("users")]
         public ActionResult<PredictionData> PredictUsersOnline(string date)

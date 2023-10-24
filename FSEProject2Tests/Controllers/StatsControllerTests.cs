@@ -17,6 +17,13 @@ namespace FSEProject2.Controllers.Tests
         {
             new User { userId = "1", wasOnline = new List<DateTime>(){ DateTime.ParseExact("2023-01-01-12:00", "yyyy-dd-MM-HH:mm", null) } },
             new User { userId = "2", wasOnline = new List<DateTime>(){ DateTime.ParseExact("2023-01-01-12:00", "yyyy-dd-MM-HH:mm", null) } },
+            new User { userId = "4", periodsOnline = new List<PeriodOnline>{
+                    new PeriodOnline { start = DateTime.Now.AddHours(-1), end = DateTime.Now },
+                    new PeriodOnline { start = DateTime.Now.AddHours(-3), end = DateTime.Now.AddHours(-2) }}},
+            new User { userId = "5", periodsOnline = new List<PeriodOnline>{
+                    new PeriodOnline { start = DateTime.Now.AddHours(-1), end = DateTime.Now },
+                    new PeriodOnline { start = DateTime.Now.AddHours(-25), end = DateTime.Now.AddHours(-24) },
+                    new PeriodOnline { start = DateTime.Now.AddDays(-8), end = DateTime.Now.AddDays(-7) }}}
         };
 
         [TestMethod()]
@@ -76,6 +83,56 @@ namespace FSEProject2.Controllers.Tests
 
             Assert.IsFalse(result.Value.wasUserOnline.Value);
             Assert.AreEqual(expected, result.Value.nearestOnlineTime);
+        }
+
+        [TestMethod()]
+        public void GetUserTimeData_CorrectCount()
+        {
+            var test = new StatsController();
+            Data.Users = sampleData;
+
+            var result = test.GetUserTimeData("4");
+            var expected = 7200;
+
+            Assert.IsNotNull(result.Value);
+            Assert.AreEqual(expected, result.Value.totalTime);
+        }
+
+        [TestMethod()]
+        public void GetUserTimeData_Null()
+        {
+            var test = new StatsController();
+            Data.Users = sampleData;
+
+            var result = test.GetUserTimeData("3");
+
+           Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+        }
+
+        [TestMethod()]
+        public void GetUserAverageTimeOnline_CorrectCount()
+        {
+            var test = new StatsController();
+            Data.Users = sampleData;
+
+            var result = test.GetUserAverageTimeOnline("5");
+            var expectedWeekly = 46800;
+            var expectedDaily = 31200;
+
+            Assert.IsNotNull(result.Value);
+            Assert.AreEqual(expectedWeekly, result.Value.weeklyAverage);
+            Assert.AreEqual(expectedDaily, result.Value.dailyAverage);
+        }
+
+        [TestMethod()]
+        public void GetUserAverageTimeOnline_Null()
+        {
+            var test = new StatsController();
+            Data.Users = sampleData;
+
+            var result = test.GetUserAverageTimeOnline("3");
+
+            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
         }
     }
 }
