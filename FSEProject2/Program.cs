@@ -1,13 +1,14 @@
 using FSEProject2;
+using FSEProject2.Models;
 using Microsoft.AspNetCore.Builder;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 var app = builder.Build();
 app.MapControllers();
 app.Run();
-
 
 public partial class Program
 {

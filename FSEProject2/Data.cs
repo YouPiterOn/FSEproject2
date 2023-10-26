@@ -5,5 +5,7 @@ namespace FSEProject2
     public class Data
     {
         public static List<User> Users = new List<User>();
+
+        public static Dictionary<string, ReportRequest> ReportRequests = new Dictionary<string, ReportRequest>();
     }
 }

@@ -6,8 +6,11 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FSEProject2.Tests
@@ -218,6 +221,82 @@ namespace FSEProject2.Tests
             var response = await _client.GetAsync("/api/user/forget?userId=3");
 
             Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
+        }
+        [TestMethod()]
+        public async Task CreateReport_Created()
+        {
+            var requestPayload = new ReportRequest
+            {
+                metrics = new List<string> { "dailyAverage", "total", "weeklyAverage" },
+                users = new List<string> { "1", "2", "3", "4", "5" }
+            };
+
+            var x = JsonContent.Create(requestPayload);
+            var response = await _client.PostAsync("/api/report/first", JsonContent.Create(requestPayload));
+
+            response.EnsureSuccessStatusCode();
+
+            var result = Data.ReportRequests.GetValueOrDefault("first");
+
+            Assert.IsNotNull(result);
+            CollectionAssert.AreEqual(requestPayload.metrics, result.metrics);
+            CollectionAssert.AreEqual(requestPayload.users, result.users);
+        }
+
+        [TestMethod()]
+        public async Task CreateReport_Failed()
+        {
+            var response = await _client.PostAsync("/api/report/name",
+                new StringContent("", Encoding.UTF8, "application/json"));
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [TestMethod()]
+        public async Task GetReport_CorrectResponse()
+        {
+            Data.ReportRequests.Add("first", new ReportRequest
+            {
+                metrics = new List<string> { "dailyAverage", "weeklyAverage", "total", "min", "max" },
+                users = new List<string> { "4" }
+            });
+
+            Data.Users = new List<User> {
+            new User { userId = "4", periodsOnline = new List<PeriodOnline>{
+                    new PeriodOnline { start = new DateTime(2023, 10, 25, 12, 0, 0), end = new DateTime(2023, 10, 25, 14, 0, 0) },
+                    new PeriodOnline { start = new DateTime(2023, 10, 16, 12, 0, 0), end = new DateTime(2023, 10, 16, 15, 0, 0) },
+                    new PeriodOnline { start = new DateTime(2023, 10, 24, 12, 0, 0), end = new DateTime(2023, 10, 24, 16, 0, 0) }}},
+            };
+            var response = await _client.GetAsync("/api/report/first?from=2023-12-10-00:00&to=2023-26-10-00:00");
+
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var reports = JsonConvert.DeserializeObject<List<Report>>(content);
+            var report = reports[0];
+            Assert.IsNotNull(reports);
+            Assert.IsNotNull(report);
+            var x = (JObject)report.metrics[0];
+            Assert.AreEqual(10800, (int)x.First.First);
+
+            x = (JObject)report.metrics[1];
+            Assert.AreEqual(16200, (int)x.First.First);
+
+            x = (JObject)report.metrics[2];
+            Assert.AreEqual(32400, (int)x.First.First);
+
+            x = (JObject)report.metrics[3];
+            Assert.AreEqual(7200, (int)x.First.First);
+
+            x = (JObject)report.metrics[4];
+            Assert.AreEqual(14400, (int)x.First.First);
+        }
+
+        [TestMethod]
+        public async Task GetReport_NotFound()
+        {
+            var response = await _client.GetAsync("/api/report/notName?from=2023-12-10-00:00&to=2023-26-10-00:00");
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
     }
 }

@@ -41,5 +41,15 @@
     {
         public string userId { get; set; }
     }
+    public class ReportRequest
+    {
+        public List<string>? metrics { get; set; }
+        public List<string>? users { get; set; }
+    }
+    public class Report
+    {
+        public string? userId { get; set; }
+        public List<Object>? metrics { get; set; }
+    }
 }
 
