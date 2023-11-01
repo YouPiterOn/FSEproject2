@@ -102,5 +102,11 @@ namespace FSEProject2.Controllers.Tests
             var response = test.GetReports("notName", "2023-12-10-00:00", "2023-26-10-00:00");
             Assert.IsInstanceOfType(response.Result, typeof(NotFoundResult));
         }
+        [TestCleanup]
+        public void Cleanup() 
+        {
+            Data.ReportRequests = new Dictionary<string, ReportRequest>();
+            Data.Users = new List<User>();
+        }
     }
 }

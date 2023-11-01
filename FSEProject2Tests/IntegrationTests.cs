@@ -255,11 +255,15 @@ namespace FSEProject2.Tests
         [TestMethod()]
         public async Task GetReport_CorrectResponse()
         {
-            Data.ReportRequests.Add("first", new ReportRequest
+            Data.ReportRequests = new Dictionary<string, ReportRequest>()
             {
-                metrics = new List<string> { "dailyAverage", "weeklyAverage", "total", "min", "max" },
-                users = new List<string> { "4" }
-            });
+                ["first"] = new ReportRequest
+                {
+                    metrics = new List<string> { "dailyAverage", "weeklyAverage", "total", "min", "max" },
+                    users = new List<string> { "4" }
+                }
+            };
+            
 
             Data.Users = new List<User> {
             new User { userId = "4", periodsOnline = new List<PeriodOnline>{
@@ -297,6 +301,12 @@ namespace FSEProject2.Tests
         {
             var response = await _client.GetAsync("/api/report/notName?from=2023-12-10-00:00&to=2023-26-10-00:00");
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+        }
+        [TestCleanup]
+        public void Cleanup()
+        {
+            Data.ReportRequests = new Dictionary<string, ReportRequest>();
+            Data.Users = new List<User>();
         }
     }
 }
