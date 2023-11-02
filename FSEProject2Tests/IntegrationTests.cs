@@ -316,7 +316,7 @@ namespace FSEProject2.Tests
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<List<FirstSeen>>(content);
-            Assert.IsNotNull(content);
+            Assert.IsNotNull(result);
             Assert.AreEqual("admin", result[0].username);
             Assert.AreEqual("1", result[0].userId);
             Assert.AreEqual(new DateTime(2023, 10, 16, 12, 0, 0), result[0].firstSeen);
