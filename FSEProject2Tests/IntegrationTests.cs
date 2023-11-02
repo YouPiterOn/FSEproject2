@@ -302,6 +302,28 @@ namespace FSEProject2.Tests
             var response = await _client.GetAsync("/api/report/notName?from=2023-12-10-00:00&to=2023-26-10-00:00");
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
+
+        [TestMethod]
+        public async Task GetUsersList_CorrectResponse()
+        {
+            Data.Users = new List<User> {
+            new User { userId = "1", nickname = "admin", periodsOnline = new List<PeriodOnline>{
+                    new PeriodOnline { start = new DateTime(2023, 10, 25, 12, 0, 0), end = new DateTime(2023, 10, 25, 14, 0, 0) },
+                    new PeriodOnline { start = new DateTime(2023, 10, 16, 12, 0, 0), end = new DateTime(2023, 10, 16, 15, 0, 0) },
+                    new PeriodOnline { start = new DateTime(2023, 10, 24, 12, 0, 0), end = new DateTime(2023, 10, 24, 16, 0, 0) }}},
+            };
+            var response = await _client.GetAsync("/api/users/list");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<List<FirstSeen>>(content);
+            Assert.IsNotNull(content);
+            Assert.AreEqual("admin", result[0].username);
+            Assert.AreEqual("1", result[0].userId);
+            Assert.AreEqual(new DateTime(2023, 10, 16, 12, 0, 0), result[0].firstSeen);
+        }
+
+
+
         [TestCleanup]
         public void Cleanup()
         {

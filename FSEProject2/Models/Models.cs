@@ -51,5 +51,11 @@
         public string? userId { get; set; }
         public List<Object>? metrics { get; set; }
     }
+    public class FirstSeen
+    {
+        public string? username { get; set;}
+        public string? userId { get; set; }
+        public DateTime? firstSeen { get; set;}
+    }   
 }
 
