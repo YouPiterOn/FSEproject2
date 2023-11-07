@@ -56,7 +56,7 @@ jobs:
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_78189AF196BC489DA831E7D11E9D97F0 }}
           package: .
   build-and-test:
-
+    needs: deploy
     name: build-and-test-${{matrix.os}}
     runs-on: ${{ matrix.os }}
     strategy:
