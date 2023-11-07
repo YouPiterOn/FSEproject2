@@ -276,24 +276,30 @@ namespace FSEProject2.Tests
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            var reports = JsonConvert.DeserializeObject<List<Report>>(content);
-            var report = reports[0];
-            Assert.IsNotNull(reports);
+            var fullReport = JsonConvert.DeserializeObject<Report>(content);
+            Assert.IsNotNull(fullReport);
+            var report = fullReport.userReports[0];
             Assert.IsNotNull(report);
+            Assert.IsNotNull(report.metrics);
             var x = (JObject)report.metrics[0];
             Assert.AreEqual(10800, (int)x.First.First);
+            Assert.AreEqual(10800, fullReport.dailyAverage);
 
             x = (JObject)report.metrics[1];
             Assert.AreEqual(16200, (int)x.First.First);
+            Assert.AreEqual(16200, fullReport.weeklyAverage);
 
             x = (JObject)report.metrics[2];
             Assert.AreEqual(32400, (int)x.First.First);
+            Assert.AreEqual(32400, fullReport.total);
 
             x = (JObject)report.metrics[3];
             Assert.AreEqual(7200, (int)x.First.First);
+            Assert.AreEqual(7200, fullReport.min);
 
             x = (JObject)report.metrics[4];
             Assert.AreEqual(14400, (int)x.First.First);
+            Assert.AreEqual(14400, fullReport.max);
         }
 
         [TestMethod]

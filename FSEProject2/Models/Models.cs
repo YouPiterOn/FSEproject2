@@ -46,10 +46,19 @@
         public List<string>? metrics { get; set; }
         public List<string>? users { get; set; }
     }
-    public class Report
+    public class UserReport
     {
         public string? userId { get; set; }
-        public List<Object>? metrics { get; set; }
+        public List<Object?>? metrics { get; set; }
+    }
+    public class Report
+    {
+        public List<UserReport?> userReports { get; set; }
+        public int dailyAverage { get; set; }
+        public int weeklyAverage { get; set; }
+        public int total { get; set; }
+        public int min { get; set; }
+        public int max { get; set; }
     }
     public class FirstSeen
     {

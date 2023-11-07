@@ -14,6 +14,7 @@ namespace FSEProject2
             }
 
             Data.Users.Remove(user);
+            Data.ForgottenUsers.Add(userId);
             return new UserId{ userId = userId };
         }
     }

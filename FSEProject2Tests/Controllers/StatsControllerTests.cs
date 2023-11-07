@@ -22,7 +22,7 @@ namespace FSEProject2.Controllers.Tests
                     new PeriodOnline { start = DateTime.Now.AddHours(-3), end = DateTime.Now.AddHours(-2) }}},
             new User { userId = "5", periodsOnline = new List<PeriodOnline>{
                     new PeriodOnline { start = DateTime.Now.AddHours(-1), end = DateTime.Now },
-                    new PeriodOnline { start = DateTime.Now.AddHours(-25), end = DateTime.Now.AddHours(-24) },
+                    new PeriodOnline { start = DateTime.Now.AddHours(-26), end = DateTime.Now.AddHours(-25) },
                     new PeriodOnline { start = DateTime.Now.AddDays(-8), end = DateTime.Now.AddDays(-7) }}}
         };
 

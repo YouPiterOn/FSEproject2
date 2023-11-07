@@ -13,6 +13,6 @@ namespace FSEProject2.Models
 
     public class AllData
     {
-        public List<User> data { get; set; }
+        public List<User>? data { get; set; }
     }
 }

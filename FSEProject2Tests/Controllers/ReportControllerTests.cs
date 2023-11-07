@@ -74,7 +74,7 @@ namespace FSEProject2.Controllers.Tests
 
             var response = test.GetReports("name", "2023-12-10-00:00", "2023-26-10-00:00");
             Assert.IsNotNull(response.Value);
-            var report = response.Value[0];
+            var report = response.Value.userReports[0];
             Assert.IsNotNull(report);
             Assert.AreEqual("4", report.userId);
             var x = report.metrics[0];
