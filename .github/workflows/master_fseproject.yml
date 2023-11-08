@@ -1,8 +1,7 @@
-
 name: Deploy secondBranch after PR completed and tests
 
 on:
-  pull-request:
+  pull_request:
     branches:
       - secondBranch
     types:
