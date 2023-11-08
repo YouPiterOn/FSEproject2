@@ -236,7 +236,7 @@ namespace FSEProject2.Tests
 
             response.EnsureSuccessStatusCode();
 
-            var result = Data.ReportRequests.GetValueOrDefault("first");
+            var result = Data.ReportRequests.FirstOrDefault(x => x.name == "first");
 
             Assert.IsNotNull(result);
             CollectionAssert.AreEqual(requestPayload.metrics, result.metrics);
@@ -255,10 +255,11 @@ namespace FSEProject2.Tests
         [TestMethod()]
         public async Task GetReport_CorrectResponse()
         {
-            Data.ReportRequests = new Dictionary<string, ReportRequest>()
+            Data.ReportRequests = new List<ReportRequest>()
             {
-                ["first"] = new ReportRequest
+                new ReportRequest
                 {
+                    name = "first",
                     metrics = new List<string> { "dailyAverage", "weeklyAverage", "total", "min", "max" },
                     users = new List<string> { "4" }
                 }
@@ -276,24 +277,47 @@ namespace FSEProject2.Tests
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            var reports = JsonConvert.DeserializeObject<List<Report>>(content);
-            var report = reports[0];
-            Assert.IsNotNull(reports);
+            var fullReport = JsonConvert.DeserializeObject<Report>(content);
+            Assert.IsNotNull(fullReport);
+            Assert.IsNotNull(fullReport.userReports);
+            var report = fullReport.userReports[0];
             Assert.IsNotNull(report);
-            var x = (JObject)report.metrics[0];
+            Assert.IsNotNull(report.metrics);
+
+            var x = (JObject?)report.metrics[0];
+            Assert.IsNotNull(x);
+            Assert.IsNotNull(x.First);
+            Assert.IsNotNull(x.First.First);
             Assert.AreEqual(10800, (int)x.First.First);
+            Assert.AreEqual(10800, fullReport.dailyAverage);
 
-            x = (JObject)report.metrics[1];
+            x = (JObject?)report.metrics[1];
+            Assert.IsNotNull(x);
+            Assert.IsNotNull(x.First);
+            Assert.IsNotNull(x.First.First);
             Assert.AreEqual(16200, (int)x.First.First);
+            Assert.AreEqual(16200, fullReport.weeklyAverage);
 
-            x = (JObject)report.metrics[2];
+            x = (JObject?)report.metrics[2];
+            Assert.IsNotNull(x);
+            Assert.IsNotNull(x.First);
+            Assert.IsNotNull(x.First.First);
             Assert.AreEqual(32400, (int)x.First.First);
+            Assert.AreEqual(32400, fullReport.total);
 
-            x = (JObject)report.metrics[3];
+            x = (JObject?)report.metrics[3];
+            Assert.IsNotNull(x);
+            Assert.IsNotNull(x.First);
+            Assert.IsNotNull(x.First.First);
             Assert.AreEqual(7200, (int)x.First.First);
+            Assert.AreEqual(7200, fullReport.min);
 
-            x = (JObject)report.metrics[4];
+            x = (JObject?)report.metrics[4];
+            Assert.IsNotNull(x);
+            Assert.IsNotNull(x.First);
+            Assert.IsNotNull(x.First.First);
             Assert.AreEqual(14400, (int)x.First.First);
+            Assert.AreEqual(14400, fullReport.max);
         }
 
         [TestMethod]
@@ -301,6 +325,36 @@ namespace FSEProject2.Tests
         {
             var response = await _client.GetAsync("/api/report/notName?from=2023-12-10-00:00&to=2023-26-10-00:00");
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task GetReportsList_CorrectResponse()
+        {
+            var sampleReport = new ReportRequest
+            {
+                name = "first",
+                metrics = new List<string> { "dailyAverage", "weeklyAverage", "total", "min", "max" },
+                users = new List<string> { "4" }
+            };
+            Data.ReportRequests = new List<ReportRequest>()
+            {
+                sampleReport
+            };
+            var response = await _client.GetAsync("/api/reports");
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<List<ReportRequest>>(content);
+            Assert.IsNotNull(result);
+            var report = result[0];
+            Assert.IsNotNull(report);
+            Assert.AreEqual(sampleReport.name, report.name);
+
+            Assert.IsNotNull(report.metrics);
+            Assert.AreEqual(0, report.metrics.Except(sampleReport.metrics).Count());
+            Assert.AreEqual(0, sampleReport.metrics.Except(report.metrics).Count());
+
+            Assert.IsNotNull(report.users);
+            Assert.AreEqual(0, report.users.Except(sampleReport.users).Count());
+            Assert.AreEqual(0, sampleReport.users.Except(report.users).Count());
         }
 
         [TestMethod]
@@ -316,7 +370,7 @@ namespace FSEProject2.Tests
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<List<FirstSeen>>(content);
-            Assert.IsNotNull(content);
+            Assert.IsNotNull(result);
             Assert.AreEqual("admin", result[0].username);
             Assert.AreEqual("1", result[0].userId);
             Assert.AreEqual(new DateTime(2023, 10, 16, 12, 0, 0), result[0].firstSeen);
@@ -327,7 +381,7 @@ namespace FSEProject2.Tests
         [TestCleanup]
         public void Cleanup()
         {
-            Data.ReportRequests = new Dictionary<string, ReportRequest>();
+            Data.ReportRequests = new List<ReportRequest>();
             Data.Users = new List<User>();
         }
     }

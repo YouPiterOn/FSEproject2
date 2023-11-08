@@ -1,14 +1,11 @@
-name: tests
+name: run tests on push
 
 on:
   push:
-  pull_request:
     branches: [ master ]
     paths:
     - 'FSEProject2Tests/IntegrationTests.cs'
-    - 'FSEProject2Tests/Controllers/PredictionsControllerTests.cs'
-    - 'FSEProject2Tests/Controllers/StatsControllerTests.cs'
-    - 'FSEProject2Tests/Controllers/UserControllerTests.cs'
+    - 'FSEProject2Tests/E2ETests.cs'
 
 env:
   DOTNET_VERSION: '6.0.401' # The .NET SDK version to use

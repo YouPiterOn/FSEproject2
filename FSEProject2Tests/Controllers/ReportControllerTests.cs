@@ -23,10 +23,11 @@ namespace FSEProject2.Controllers.Tests
                     new PeriodOnline { start = new DateTime(2023, 10, 24, 12, 0, 0), end = new DateTime(2023, 10, 24, 16, 0, 0) }}},
             new User { userId = "5", periodsOnline = new List<PeriodOnline>()}
         };
-        private Dictionary<string, ReportRequest> sampleRequests = new Dictionary<string, ReportRequest>
+        private List<ReportRequest> sampleRequests = new List<ReportRequest>
         {
-            ["name"] = new ReportRequest()
+            new ReportRequest()
             {
+                name = "name",
                 metrics = new List<string>() { "dailyAverage", "weeklyAverage", "total", "min", "max" },
                 users = new List<string>() { "4" }
             }
@@ -35,7 +36,6 @@ namespace FSEProject2.Controllers.Tests
         public void CreateReport_Created()
         {
             var test = new ReportController();
-            var json = "{\"metrics\": [\"dailyAverage\", \"total\", \"weeklyAverage\"], \"users\": [\"1\", \"2\", \"3\", \"4\", \"5\"]}";
             var requestPayload = new ReportRequest
             {
                 metrics = new List<string> { "dailyAverage", "total", "weeklyAverage" },
@@ -45,9 +45,11 @@ namespace FSEProject2.Controllers.Tests
             var response = test.CreateReport(name, requestPayload);
 
             var expected = new ReportRequest() { metrics = new List<string>() { "dailyAverage", "total", "weeklyAverage" }, users = new List<string>() { "1", "2", "3", "4", "5" } };
-            var report = Data.ReportRequests[name];
+            var report = Data.ReportRequests.FirstOrDefault(x => x.name == name);
 
             Assert.IsNotNull(report);
+            Assert.IsNotNull(report.metrics);
+            Assert.IsNotNull(report.users);
             Assert.IsInstanceOfType(response, typeof(Object));
             Assert.AreEqual(0, report.metrics.Except(expected.metrics).Count());
             Assert.AreEqual(0, report.users.Except(expected.users).Count());
@@ -72,25 +74,48 @@ namespace FSEProject2.Controllers.Tests
             Data.Users = sampleData;
             Data.ReportRequests = sampleRequests;
 
-            var response = test.GetReports("name", "2023-12-10-00:00", "2023-26-10-00:00");
+            var response = test.GetReport("name", "2023-12-10-00:00", "2023-26-10-00:00");
             Assert.IsNotNull(response.Value);
-            var report = response.Value[0];
+            Assert.IsNotNull(response.Value.userReports);
+            var report = response.Value.userReports[0];
             Assert.IsNotNull(report);
+            Assert.IsNotNull(report.metrics);
             Assert.AreEqual("4", report.userId);
+
             var x = report.metrics[0];
-            Assert.AreEqual(10800, x.GetType().GetProperty("dailyAverage").GetValue(x, null));
+            Assert.IsNotNull(x);
+            Assert.IsNotNull(x.GetType());
+            var property = x.GetType().GetProperty("dailyAverage");
+            Assert.IsNotNull(property);
+            Assert.AreEqual(10800,property.GetValue(x, null));
 
             x = report.metrics[1];
-            Assert.AreEqual(16200, x.GetType().GetProperty("weeklyAverage").GetValue(x, null));
+            Assert.IsNotNull(x);
+            Assert.IsNotNull(x.GetType());
+            property = x.GetType().GetProperty("weeklyAverage");
+            Assert.IsNotNull(property);
+            Assert.AreEqual(16200, property.GetValue(x, null));
 
             x = report.metrics[2];
-            Assert.AreEqual(32400, x.GetType().GetProperty("total").GetValue(x, null));
+            Assert.IsNotNull(x);
+            Assert.IsNotNull(x.GetType());
+            property = x.GetType().GetProperty("total");
+            Assert.IsNotNull(property);
+            Assert.AreEqual(32400, property.GetValue(x, null));
 
             x = report.metrics[3];
-            Assert.AreEqual(7200, x.GetType().GetProperty("min").GetValue(x, null));
+            Assert.IsNotNull(x);
+            Assert.IsNotNull(x.GetType());
+            property = x.GetType().GetProperty("min");
+            Assert.IsNotNull(property);
+            Assert.AreEqual(7200, property.GetValue(x, null));
 
             x = report.metrics[4];
-            Assert.AreEqual(14400, x.GetType().GetProperty("max").GetValue(x, null));
+            Assert.IsNotNull(x);
+            Assert.IsNotNull(x.GetType());
+            property = x.GetType().GetProperty("max");
+            Assert.IsNotNull(property);
+            Assert.AreEqual(14400, property.GetValue(x, null));
         }
         [TestMethod]
         public void GetReport_NotFound()
@@ -99,13 +124,23 @@ namespace FSEProject2.Controllers.Tests
             Data.Users = sampleData;
             Data.ReportRequests = sampleRequests;
 
-            var response = test.GetReports("notName", "2023-12-10-00:00", "2023-26-10-00:00");
+            var response = test.GetReport("notName", "2023-12-10-00:00", "2023-26-10-00:00");
             Assert.IsInstanceOfType(response.Result, typeof(NotFoundResult));
+        }
+        [TestMethod]
+        public void GetReportsList_CorrectResponse()
+        {
+            var test = new ReportController();
+            Data.Users = sampleData;
+            Data.ReportRequests = sampleRequests;
+
+            var response = test.GetReportsList();
+            Assert.AreEqual(sampleRequests, response.Value);
         }
         [TestCleanup]
         public void Cleanup() 
         {
-            Data.ReportRequests = new Dictionary<string, ReportRequest>();
+            Data.ReportRequests = new List<ReportRequest>();
             Data.Users = new List<User>();
         }
     }

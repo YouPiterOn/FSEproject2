@@ -5,94 +5,116 @@ namespace FSEProject2
 {
     public class Reports
     {
-        private static Object DailyAverage(User user, DateTime from, DateTime to)
-        {
-            if (user.periodsOnline == null) return null;
-            var days = user.periodsOnline.FindAll(x => from < x.start && x.end < to).GroupBy(x => x.start.Date);
-            var secondsDay = days.Select(y => Enumerable.Sum(y.Select(x => (x.end - x.start).TotalSeconds)));
-            var dailyAverage = (int)secondsDay.Average();
-            return new { dailyAverage = dailyAverage };
-        }
-        private static Object WeeklyAverage(User user, DateTime from, DateTime to)
-        {
-            if (user.periodsOnline == null) return null;
-            var weeks = user.periodsOnline.Where(x => from < x.start && x.end < to).Select(x => new
-            {
-                Period = x,
-                Year = x.start.Year,
-                Week = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear
-                (x.start, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday)
-            })
-            .GroupBy(x => new { x.Year, x.Week });
-            var secondsWeek = weeks.Select(y => Enumerable.Sum(y.Select(x => (x.Period.end - x.Period.start).TotalSeconds)));
-            var weeklyAverage = (int)secondsWeek.Average();
-            return new { weeklyAverage = weeklyAverage };
-        }
-        private static Object Total(User user, DateTime from, DateTime to) 
-        {
-            if (user.periodsOnline == null) return null;
-            var total = user.periodsOnline.Where(x => from < x.start && x.end < to).Select(x => (x.end - x.start).TotalSeconds).Sum();
-            return new { total = (int)total };
-        }
-        private static Object Min(User user, DateTime from, DateTime to)
-        {
-            if (user.periodsOnline == null) return null;
-            var days = user.periodsOnline.FindAll(x => from < x.start && x.end < to).GroupBy(x => x.start.Date);
-            var secondsDay = days.Select(y => Enumerable.Sum(y.Select(x => (x.end - x.start).TotalSeconds)));
-            var min = (int)secondsDay.Min();
-            return new { min = min };
-        }
-        private static Object Max(User user, DateTime from, DateTime to)
-        {
-            if (user.periodsOnline == null) return null;
-            var days = user.periodsOnline.FindAll(x => from < x.start && x.end < to).GroupBy(x => x.start.Date);
-            var secondsDay = days.Select(y => Enumerable.Sum(y.Select(x => (x.end - x.start).TotalSeconds)));
-            var max = (int)secondsDay.Max();
-            return new { max = max };
-        }
-
-
-        public static Object CreateReport(string name, ReportRequest request)
+        public static Object? CreateReport(string name, ReportRequest request)
         {
             if (request.users == null || request.metrics == null) return null;
-            Data.ReportRequests.Add(name, request);
+            request.name = name;
+            Data.ReportRequests.Add(request);
             return new Object() { };
         }
-        public static List<Report?> GetReport(string name, DateTime from, DateTime to)
+        public static Report? GetReport(string name, DateTime from, DateTime to)
         {
-            var result = new List<Report?>();
-            var request = Data.ReportRequests.GetValueOrDefault(name);
+            var result = new Report()
+            {
+                userReports = new List<UserReport?>(),
+                dailyAverage = 0,
+                weeklyAverage = 0,
+                total = 0,
+                min = 0,
+                max = 0
+            };
+            var request = Data.ReportRequests.FirstOrDefault(x => x.name == name);
             if (request == null) return null;
+            if (request.users == null) return null;
+
             foreach(var userId in request.users)
             {
                 var user = Data.Users.FirstOrDefault(x => x.userId == userId);
                 if (user == null)
                 {
-                    result.Add(null);
+                    result.userReports.Add(null);
+                    continue;
                 }
-                var report = new Report() { userId = user.userId, metrics = new List<Object>() };
+                var report = new UserReport() { userId = user.userId, metrics = new List<Object?>() };
+                if(request.metrics == null) 
+                { 
+                    report.metrics = null; 
+                    continue; 
+                }
                 foreach(var metric in request.metrics)
                 {
                     switch(metric)
                     {
                         case "dailyAverage":
-                            report.metrics.Add(DailyAverage(user, from, to));
+                            if (user.periodsOnline == null) 
+                            {
+                                report.metrics.Add(null);
+                                break;
+                            }
+                            var days = user.periodsOnline.FindAll(x => from < x.start && x.end < to).GroupBy(x => x.start.Date);
+                            var secondsDay = days.Select(y => Enumerable.Sum(y.Select(x => (x.end - x.start).TotalSeconds)));
+                            var dailyAverage = (int)secondsDay.Average();
+                            report.metrics.Add(new { dailyAverage = dailyAverage });
+                            result.dailyAverage += dailyAverage;
                             break;
+
                         case "weeklyAverage":
-                            report.metrics.Add(WeeklyAverage(user, from, to));
+                            if (user.periodsOnline == null)
+                            {
+                                report.metrics.Add(null);
+                                break;
+                            }
+                            var weeks = user.periodsOnline.Where(x => from < x.start && x.end < to).Select(x => new
+                            {
+                                Period = x,
+                                Year = x.start.Year,
+                                Week = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear
+                                (x.start, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday)
+                            })
+                            .GroupBy(x => new { x.Year, x.Week });
+                            var secondsWeek = weeks.Select(y => Enumerable.Sum(y.Select(x => (x.Period.end - x.Period.start).TotalSeconds)));
+                            var weeklyAverage = (int)secondsWeek.Average();
+                            report.metrics.Add(new { weeklyAverage = weeklyAverage });
+                            result.weeklyAverage += weeklyAverage;
                             break;
+
                         case "total":
-                            report.metrics.Add(Total(user, from, to));
+                            if (user.periodsOnline == null)
+                            {
+                                report.metrics.Add(null);
+                                break;
+                            }
+                            var total = user.periodsOnline.Where(x => from < x.start && x.end < to).Select(x => (x.end - x.start).TotalSeconds).Sum();
+                            report.metrics.Add(new { total = (int)total });
+                            result.total += (int)total;
                             break;
                         case "min":
-                            report.metrics.Add(Min(user, from, to));
+                            if (user.periodsOnline == null)
+                            {
+                                report.metrics.Add(null);
+                                break;
+                            }
+                            days = user.periodsOnline.FindAll(x => from < x.start && x.end < to).GroupBy(x => x.start.Date);
+                            secondsDay = days.Select(y => Enumerable.Sum(y.Select(x => (x.end - x.start).TotalSeconds)));
+                            var min = (int)secondsDay.Min();
+                            report.metrics.Add(new { min = min });
+                            result.min += min;
                             break;
                         case "max":
-                            report.metrics.Add(Max(user, from, to));
+                            if (user.periodsOnline == null)
+                            {
+                                report.metrics.Add(null);
+                                break;
+                            }
+                            days = user.periodsOnline.FindAll(x => from < x.start && x.end < to).GroupBy(x => x.start.Date);
+                            secondsDay = days.Select(y => Enumerable.Sum(y.Select(x => (x.end - x.start).TotalSeconds)));
+                            var max = (int)secondsDay.Max();
+                            report.metrics.Add(new { max = max });
+                            result.max += max;
                             break;
                     }
                 }
-                result.Add(report);
+                result.userReports.Add(report);
             }
             return result;
         }
