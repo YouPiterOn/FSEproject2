@@ -1,11 +1,12 @@
 
-name: Deploy to Azure and run test after push
+name: Deploy secondBranch after PR completed and tests
 
 on:
   pull-request:
     branches:
       - secondBranch
-  workflow_dispatch:
+    types:
+      - closed
 
 jobs:
   build:
