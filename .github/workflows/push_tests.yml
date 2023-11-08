@@ -1,11 +1,14 @@
-name: run tests on push
+name: tests
 
 on:
   push:
-    branches: [ master ]
+  pull_request:
+    branches: [ main ]
     paths:
     - 'FSEProject2Tests/IntegrationTests.cs'
-    - 'FSEProject2Tests/E2ETests.cs'
+    - 'FSEProject2Tests/Controllers/PredictionsControllerTests.cs'
+    - 'FSEProject2Tests/Controllers/StatsControllerTests.cs'
+    - 'FSEProject2Tests/Controllers/UserControllerTests.cs'
 
 env:
   DOTNET_VERSION: '6.0.401' # The .NET SDK version to use
@@ -28,9 +31,9 @@ jobs:
 
     - name: Install dependencies
       run: dotnet restore
-      
+
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    
+
     - name: Test
       run: dotnet test --no-restore --verbosity normal
