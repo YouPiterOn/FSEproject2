@@ -8,6 +8,6 @@ namespace FSEProject2
 
         public static List<string> ForgottenUsers = new List<string>();
 
-        public static Dictionary<string, ReportRequest> ReportRequests = new Dictionary<string, ReportRequest>();
+        public static List<ReportRequest> ReportRequests = new List<ReportRequest>();
     }
 }

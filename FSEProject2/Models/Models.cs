@@ -39,10 +39,11 @@
     }
     public class UserId
     {
-        public string userId { get; set; }
+        public string? userId { get; set; }
     }
     public class ReportRequest
     {
+        public string? name { get; set; }
         public List<string>? metrics { get; set; }
         public List<string>? users { get; set; }
     }
@@ -53,7 +54,7 @@
     }
     public class Report
     {
-        public List<UserReport?> userReports { get; set; }
+        public List<UserReport?>? userReports { get; set; }
         public int dailyAverage { get; set; }
         public int weeklyAverage { get; set; }
         public int total { get; set; }

@@ -5,11 +5,11 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FSEProject2.Controllers
 {
-    [Route("api/report")]
+    [Route("api")]
     [ApiController]
     public class ReportController : ControllerBase
     {
-        [HttpPost("{name}")]
+        [HttpPost("report/{name}")]
         public ActionResult<object> CreateReport(string name, [FromBody] ReportRequest request)
         {
             if (request == null) { return BadRequest(); }
@@ -19,8 +19,8 @@ namespace FSEProject2.Controllers
             if (response == null) { return BadRequest(); }
             return response;
         }
-        [HttpGet("{name}")]
-        public ActionResult<Report> GetReports(string name, string from, string to) 
+        [HttpGet("report/{name}")]
+        public ActionResult<Report> GetReport(string name, string from, string to) 
         {
             var actualFrom = DateTime.ParseExact(from, "yyyy-dd-MM-HH:mm", null);
             var actualTo = DateTime.ParseExact(to, "yyyy-dd-MM-HH:mm", null);
@@ -29,6 +29,11 @@ namespace FSEProject2.Controllers
 
             if (response == null) { return NotFound(); }
             return response;
+        }
+        [HttpGet("reports")]
+        public ActionResult<List<ReportRequest>> GetReportsList()
+        {
+            return Data.ReportRequests;
         }
     }
 }

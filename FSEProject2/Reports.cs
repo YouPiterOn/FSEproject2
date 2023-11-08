@@ -5,10 +5,11 @@ namespace FSEProject2
 {
     public class Reports
     {
-        public static Object CreateReport(string name, ReportRequest request)
+        public static Object? CreateReport(string name, ReportRequest request)
         {
             if (request.users == null || request.metrics == null) return null;
-            Data.ReportRequests.Add(name, request);
+            request.name = name;
+            Data.ReportRequests.Add(request);
             return new Object() { };
         }
         public static Report? GetReport(string name, DateTime from, DateTime to)
@@ -22,7 +23,7 @@ namespace FSEProject2
                 min = 0,
                 max = 0
             };
-            var request = Data.ReportRequests.GetValueOrDefault(name);
+            var request = Data.ReportRequests.FirstOrDefault(x => x.name == name);
             if (request == null) return null;
             if (request.users == null) return null;
 

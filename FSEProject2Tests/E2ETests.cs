@@ -87,6 +87,17 @@ namespace FSEProject2.Tests
         }
 
         [TestMethod]
+        public async Task GetReportsList_CorrectResponse()
+        {
+            var apiUrl = "https://fseproject.azurewebsites.net/api/reports";
+
+            string response = await FetchResponse(apiUrl);
+            var reports = JsonConvert.DeserializeObject<object>(response);
+            Assert.IsNotNull(reports);
+            Assert.AreEqual("[]", reports.ToString());
+        }
+
+        [TestMethod]
         public async Task GetUsersList_CorrectResponse()
         {
             var apiUrl = "https://fseproject.azurewebsites.net/api/users/list";
