@@ -1,12 +1,10 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
 
 name: Deploy to Azure and run test after push
 
 on:
-  push:
+  pull-request:
     branches:
-      - master
+      - secondBranch
   workflow_dispatch:
 
 jobs:
@@ -36,7 +34,7 @@ jobs:
 
   deploy:
     runs-on: windows-latest
-    needs: build
+    needs: [build, build-and-test]
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -56,7 +54,6 @@ jobs:
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_78189AF196BC489DA831E7D11E9D97F0 }}
           package: .
   build-and-test:
-    needs: deploy
     name: build-and-test-${{matrix.os}}
     runs-on: ${{ matrix.os }}
     strategy:
