@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Numerics;
 using Newtonsoft.Json;
@@ -7,9 +7,9 @@ using FSEProject2.Models;
 
 namespace FSEProject2
 {
-    public class Assignment2
+    public static class Assignment2
     {
-        public static Dictionary<string, Dictionary<string, string>> Languages = new Dictionary<string, Dictionary<string, string>>
+        private static Dictionary<string, Dictionary<string, string>> Languages = new Dictionary<string, Dictionary<string, string>>
         {
             ["eng"] = new Dictionary<string, string>
             {
@@ -106,7 +106,7 @@ namespace FSEProject2
             while (Language == null) Language = Console.ReadLine();
             return Language;
         }
-        public static async Task<AllData> FetchResponse(int offset, string apiUrl)
+        public static async Task<AllData?> FetchResponse(int offset, string apiUrl)
         {
             var httpClient = new HttpClient();
             var response = await httpClient.GetStringAsync(apiUrl + offset);
@@ -119,14 +119,14 @@ namespace FSEProject2
             var Language = GetLanguage();
             string apiUrl = "https://sef.podkolzin.consulting/api/users/lastSeen?offset=";
             var offset = 0; 
-            var allData = new AllData();
+            var allData = new AllData() { data = new List<User>() };
             while (true)
             {
                 var usersData = await FetchResponse(offset, apiUrl);
-                if (usersData == null) return allData;
+                if (usersData == null || usersData.data == null) return allData;
                 foreach (var user in usersData.data)
                 {
-                    //Console.WriteLine(CreateOutput(user, Language));
+                    Console.WriteLine(CreateOutput(user, Language));
                     allData.data.Add(user);
                 }
                 if (usersData.data.Count == 0) return allData;

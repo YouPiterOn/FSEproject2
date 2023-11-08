@@ -36,6 +36,7 @@ namespace FSEProject2.Controllers.Tests
 
             var result = test.GetUsersOnline("2023-01-01-12:00");
 
+            Assert.IsNotNull(result.Value);
             Assert.AreEqual(expected, result.Value.usersOnline);
         }
         [TestMethod()]
@@ -45,7 +46,8 @@ namespace FSEProject2.Controllers.Tests
             Data.Users = sampleData;
 
             var result = test.GetUsersOnline("2023-01-01-13:00");
-
+            
+            Assert.IsNotNull (result.Value);
             Assert.IsNull(result.Value.usersOnline);
         }
 
@@ -68,6 +70,8 @@ namespace FSEProject2.Controllers.Tests
 
             var result = test.GetUserStats("2023-01-01-12:00", "1");
 
+            Assert.IsNotNull(result.Value);
+            Assert.IsNotNull(result.Value.wasUserOnline);
             Assert.IsTrue(result.Value.wasUserOnline.Value);
             Assert.IsNull(result.Value.nearestOnlineTime);
         }
@@ -81,6 +85,9 @@ namespace FSEProject2.Controllers.Tests
             var result = test.GetUserStats("2023-01-01-13:00", "1");
             var expected = DateTime.ParseExact("2023-01-01-12:00", "yyyy-dd-MM-HH:mm", null);
 
+
+            Assert.IsNotNull(result.Value);
+            Assert.IsNotNull(result.Value.wasUserOnline);
             Assert.IsFalse(result.Value.wasUserOnline.Value);
             Assert.AreEqual(expected, result.Value.nearestOnlineTime);
         }

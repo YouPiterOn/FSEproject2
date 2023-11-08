@@ -1,6 +1,7 @@
-﻿using FSEProject2.Models;
+using FSEProject2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace FSEProject2.Controllers
 {
@@ -12,7 +13,7 @@ namespace FSEProject2.Controllers
         [HttpGet("users")]
         public ActionResult<HistoricalData> GetUsersOnline(string date)
         {
-            var actualDate = DateTime.ParseExact(date, "yyyy-dd-MM-HH:mm", null);
+            var actualDate = DateTime.ParseExact(date, "yyyy-dd-MM-HH:mm", CultureInfo.InvariantCulture);
 
             var response = Stats.GetUsersOnline(actualDate);
 
@@ -23,7 +24,7 @@ namespace FSEProject2.Controllers
         [HttpGet("user")]
         public ActionResult<UserHistoricalData> GetUserStats(string date, string userId)
         {
-            var actualDate = DateTime.ParseExact(date, "yyyy-dd-MM-HH:mm", null);
+            var actualDate = DateTime.ParseExact(date, "yyyy-dd-MM-HH:mm", CultureInfo.InvariantCulture);
 
             var response = Stats.GetUserStats(actualDate, userId);
 

@@ -1,12 +1,12 @@
-﻿using FSEProject2.Models;
+using FSEProject2.Models;
 
 namespace FSEProject2
 {
-    public class UserActions
+    public static class UserActions
     {
-        public static UserId Forget(string userId) 
+        public static UserId? Forget(string userId) 
         {
-            var user = Data.Users.FirstOrDefault(u => u.userId == userId);
+            var user = Data.Users.Find(u => u.userId == userId);
 
             if (user == null)
             {

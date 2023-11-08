@@ -1,17 +1,17 @@
-﻿using FSEProject2.Models;
+using FSEProject2.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FSEProject2
 {
-    public class Predictions
+    public static class Predictions
     {
         public static PredictionData PredictUsersOnline(DateTime date)
         {
             List<DateTime> onlineData = new List<DateTime>();
-            foreach (var user in Data.Users)
+            foreach (var wasOnline in Data.Users.Select(user => user.wasOnline))
             {
-                if (user.wasOnline == null) continue;
-                foreach (var dateOnline in user.wasOnline)
+                if (wasOnline == null) continue;
+                foreach (var dateOnline in wasOnline)
                     onlineData.Add(dateOnline);
             }
             var dayOfWeek = date.DayOfWeek;
@@ -23,12 +23,12 @@ namespace FSEProject2
             return new PredictionData { onlineUsers = averageUsers };
         }
 
-        public static UserPredictionData PredictUserOnline(DateTime date, double tolerance, string userId)
+        public static UserPredictionData? PredictUserOnline(DateTime date, double tolerance, string userId)
         {
 
-            var user = Data.Users.FirstOrDefault(u => u.userId == userId);
+            var user = Data.Users.Find(u => u.userId == userId);
 
-            if (user == null) return null;
+            if (user == null || user.wasOnline == null) return null;
 
             var totalWeeks = (int)(date.Subtract(user.wasOnline.Min()).TotalDays / 7);
             var timesUserWasOnline = user.wasOnline.Count(x => x.DayOfWeek == date.DayOfWeek && x.Hour == date.Hour);
