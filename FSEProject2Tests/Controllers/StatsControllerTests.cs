@@ -13,7 +13,7 @@ namespace FSEProject2.Controllers.Tests
     [TestClass()]
     public class StatsControllerTests
     {
-        private List<User> sampleData = new List<User>
+        private readonly List<User> sampleData = new List<User>
         {
             new User { userId = "1", wasOnline = new List<DateTime>(){ DateTime.ParseExact("2023-01-01-12:00", "yyyy-dd-MM-HH:mm", null) } },
             new User { userId = "2", wasOnline = new List<DateTime>(){ DateTime.ParseExact("2023-01-01-12:00", "yyyy-dd-MM-HH:mm", null) } },
@@ -36,6 +36,7 @@ namespace FSEProject2.Controllers.Tests
 
             var result = test.GetUsersOnline("2023-01-01-12:00");
 
+            Assert.IsNotNull(result.Value);
             Assert.AreEqual(expected, result.Value.usersOnline);
         }
         [TestMethod()]
@@ -46,6 +47,7 @@ namespace FSEProject2.Controllers.Tests
 
             var result = test.GetUsersOnline("2023-01-01-13:00");
 
+            Assert.IsNotNull(result.Value);
             Assert.IsNull(result.Value.usersOnline);
         }
 
@@ -68,6 +70,8 @@ namespace FSEProject2.Controllers.Tests
 
             var result = test.GetUserStats("2023-01-01-12:00", "1");
 
+            Assert.IsNotNull(result.Value);
+            Assert.IsNotNull(result.Value.wasUserOnline);
             Assert.IsTrue(result.Value.wasUserOnline.Value);
             Assert.IsNull(result.Value.nearestOnlineTime);
         }
@@ -81,6 +85,9 @@ namespace FSEProject2.Controllers.Tests
             var result = test.GetUserStats("2023-01-01-13:00", "1");
             var expected = DateTime.ParseExact("2023-01-01-12:00", "yyyy-dd-MM-HH:mm", null);
 
+
+            Assert.IsNotNull(result.Value);
+            Assert.IsNotNull(result.Value.wasUserOnline);
             Assert.IsFalse(result.Value.wasUserOnline.Value);
             Assert.AreEqual(expected, result.Value.nearestOnlineTime);
         }
@@ -106,7 +113,7 @@ namespace FSEProject2.Controllers.Tests
 
             var result = test.GetUserTimeData("3");
 
-           Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
         }
 
         [TestMethod()]

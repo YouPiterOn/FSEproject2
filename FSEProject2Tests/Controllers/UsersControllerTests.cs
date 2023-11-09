@@ -13,7 +13,7 @@ namespace FSEProject2.Controllers.Tests
     [TestClass()]
     public class UsersControllerTests
     {
-        private List<User> sampleData = new List<User>()
+        private readonly List<User> sampleData = new List<User>()
         {
             new User { userId = "1", nickname = "admin", periodsOnline = new List<PeriodOnline>{
                     new PeriodOnline { start = new DateTime(2023, 10, 25, 12, 0, 0), end = new DateTime(2023, 10, 25, 14, 0, 0) },
@@ -22,7 +22,7 @@ namespace FSEProject2.Controllers.Tests
         };
 
         [TestMethod()]
-        public void GetUsersList_CorrectResponse ()
+        public void GetUsersList_CorrectResponse()
         {
             var test = new UsersController();
             Data.Users = sampleData;

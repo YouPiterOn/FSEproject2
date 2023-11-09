@@ -1,9 +1,9 @@
-﻿using FSEProject2.Models;
+using FSEProject2.Models;
 using System.Globalization;
 
 namespace FSEProject2
 {
-    public class Reports
+    public static class Reports
     {
         public static Object? CreateReport(string name, ReportRequest request)
         {
@@ -23,30 +23,30 @@ namespace FSEProject2
                 min = 0,
                 max = 0
             };
-            var request = Data.ReportRequests.FirstOrDefault(x => x.name == name);
+            var request = Data.ReportRequests.Find(x => x.name == name);
             if (request == null) return null;
             if (request.users == null) return null;
 
-            foreach(var userId in request.users)
+            foreach (var userId in request.users)
             {
-                var user = Data.Users.FirstOrDefault(x => x.userId == userId);
+                var user = Data.Users.Find(x => x.userId == userId);
                 if (user == null)
                 {
                     result.userReports.Add(null);
                     continue;
                 }
                 var report = new UserReport() { userId = user.userId, metrics = new List<Object?>() };
-                if(request.metrics == null) 
-                { 
-                    report.metrics = null; 
-                    continue; 
-                }
-                foreach(var metric in request.metrics)
+                if (request.metrics == null)
                 {
-                    switch(metric)
+                    report.metrics = null;
+                    continue;
+                }
+                foreach (var metric in request.metrics)
+                {
+                    switch (metric)
                     {
                         case "dailyAverage":
-                            if (user.periodsOnline == null) 
+                            if (user.periodsOnline == null)
                             {
                                 report.metrics.Add(null);
                                 break;

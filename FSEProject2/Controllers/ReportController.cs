@@ -1,6 +1,7 @@
-﻿using FSEProject2.Models;
+using FSEProject2.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Globalization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FSEProject2.Controllers
@@ -20,10 +21,10 @@ namespace FSEProject2.Controllers
             return response;
         }
         [HttpGet("report/{name}")]
-        public ActionResult<Report> GetReport(string name, string from, string to) 
+        public ActionResult<Report> GetReport(string name, string from, string to)
         {
-            var actualFrom = DateTime.ParseExact(from, "yyyy-dd-MM-HH:mm", null);
-            var actualTo = DateTime.ParseExact(to, "yyyy-dd-MM-HH:mm", null);
+            var actualFrom = DateTime.ParseExact(from, "yyyy-dd-MM-HH:mm", CultureInfo.InvariantCulture);
+            var actualTo = DateTime.ParseExact(to, "yyyy-dd-MM-HH:mm", CultureInfo.InvariantCulture);
 
             var response = Reports.GetReport(name, actualFrom, actualTo);
 

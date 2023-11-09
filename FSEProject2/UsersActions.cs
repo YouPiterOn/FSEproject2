@@ -1,8 +1,8 @@
-﻿using FSEProject2.Models;
+using FSEProject2.Models;
 
 namespace FSEProject2
 {
-    public class UsersActions
+    public static class UsersActions
     {
         public static List<FirstSeen> GetUsersList()
         {

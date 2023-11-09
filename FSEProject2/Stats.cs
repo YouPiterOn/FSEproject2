@@ -1,18 +1,18 @@
-﻿using FSEProject2.Models;
+using FSEProject2.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 
 namespace FSEProject2
 {
-    public class Stats
+    public static class Stats
     {
         public static HistoricalData GetUsersOnline(DateTime date)
         {
             List<DateTime> onlineData = new List<DateTime>();
-            foreach (var user in Data.Users)
+            foreach (var wasOnline in Data.Users.Select(user => user.wasOnline))
             {
-                if (user.wasOnline == null) continue;
-                foreach (var dateOnline in user.wasOnline)
+                if (wasOnline == null) continue;
+                foreach (var dateOnline in wasOnline)
                     onlineData.Add(dateOnline);
             }
 
@@ -21,11 +21,11 @@ namespace FSEProject2
             return new HistoricalData { usersOnline = usersCount };
         }
 
-        public static UserHistoricalData GetUserStats(DateTime date, string userId)
+        public static UserHistoricalData? GetUserStats(DateTime date, string userId)
         {
-            var user = Data.Users.FirstOrDefault(u => u.userId == userId);
+            var user = Data.Users.Find(u => u.userId == userId);
 
-            if (user == null)
+            if (user == null || user.wasOnline == null)
             {
                 return null;
             }
@@ -33,11 +33,11 @@ namespace FSEProject2
             bool? wasUserOnline = null;
             DateTime? nearestOnlineTime = null;
 
-            if (user.wasOnline.Any(x => x == date))
+            if (user.wasOnline.Contains(date))
             {
                 wasUserOnline = true;
             }
-            else 
+            else
             {
                 wasUserOnline = false;
 
@@ -47,10 +47,10 @@ namespace FSEProject2
             return new UserHistoricalData { wasUserOnline = wasUserOnline, nearestOnlineTime = nearestOnlineTime };
         }
 
-        public static UserTimeData GetUserTimeData(string userId) 
+        public static UserTimeData? GetUserTimeData(string userId)
         {
-            var user = Data.Users.FirstOrDefault(u => u.userId == userId);
-            if (user == null) 
+            var user = Data.Users.Find(u => u.userId == userId);
+            if (user == null)
             {
                 return null;
             }
@@ -62,9 +62,9 @@ namespace FSEProject2
             return new UserTimeData { totalTime = result };
         }
 
-        public static UserAverageTime GetUserAverageTimeOnline(string userId)
+        public static UserAverageTime? GetUserAverageTimeOnline(string userId)
         {
-            var user = Data.Users.FirstOrDefault(x => x.userId == userId);
+            var user = Data.Users.Find(x => x.userId == userId);
             if (user == null)
             {
                 return null;

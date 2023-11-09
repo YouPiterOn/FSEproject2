@@ -15,7 +15,7 @@ namespace FSEProject2.Controllers.Tests
     [TestClass()]
     public class ReportControllerTests
     {
-        private List<User> sampleData = new List<User>
+        private readonly List<User> sampleData = new List<User>
         {
             new User { userId = "4", periodsOnline = new List<PeriodOnline>{
                     new PeriodOnline { start = new DateTime(2023, 10, 25, 12, 0, 0), end = new DateTime(2023, 10, 25, 14, 0, 0) },
@@ -23,7 +23,7 @@ namespace FSEProject2.Controllers.Tests
                     new PeriodOnline { start = new DateTime(2023, 10, 24, 12, 0, 0), end = new DateTime(2023, 10, 24, 16, 0, 0) }}},
             new User { userId = "5", periodsOnline = new List<PeriodOnline>()}
         };
-        private List<ReportRequest> sampleRequests = new List<ReportRequest>
+        private readonly List<ReportRequest> sampleRequests = new List<ReportRequest>
         {
             new ReportRequest()
             {
@@ -60,7 +60,7 @@ namespace FSEProject2.Controllers.Tests
         public void CreateReport_Failed()
         {
             var test = new ReportController();
-            var requestPayload = new ReportRequest{};
+            var requestPayload = new ReportRequest { };
             var name = "name";
             var response = test.CreateReport(name, requestPayload);
 
@@ -87,7 +87,7 @@ namespace FSEProject2.Controllers.Tests
             Assert.IsNotNull(x.GetType());
             var property = x.GetType().GetProperty("dailyAverage");
             Assert.IsNotNull(property);
-            Assert.AreEqual(10800,property.GetValue(x, null));
+            Assert.AreEqual(10800, property.GetValue(x, null));
 
             x = report.metrics[1];
             Assert.IsNotNull(x);
@@ -138,7 +138,7 @@ namespace FSEProject2.Controllers.Tests
             Assert.AreEqual(sampleRequests, response.Value);
         }
         [TestCleanup]
-        public void Cleanup() 
+        public void Cleanup()
         {
             Data.ReportRequests = new List<ReportRequest>();
             Data.Users = new List<User>();
