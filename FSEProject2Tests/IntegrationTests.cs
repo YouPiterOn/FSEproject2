@@ -18,8 +18,8 @@ namespace FSEProject2.Tests
     [TestClass]
     public class IntegrationTests
     {
-        private WebApplicationFactory<Program> _factory;
-        private HttpClient _client;
+        private readonly WebApplicationFactory<Program> _factory;
+        private readonly HttpClient _client;
 
         public IntegrationTests()
         {
@@ -27,10 +27,10 @@ namespace FSEProject2.Tests
             _client = _factory.CreateClient();
             Data.Users = new List<User>
             {
-            new User {userId = "1", wasOnline = new List<DateTime>(){ 
+            new User {userId = "1", wasOnline = new List<DateTime>(){
                 DateTime.ParseExact("2023-10-10-12:00", "yyyy-dd-MM-HH:mm", null),
                 DateTime.ParseExact("2023-17-10-12:00", "yyyy-dd-MM-HH:mm", null) } },
-            new User {userId = "2", wasOnline = new List<DateTime>(){ 
+            new User {userId = "2", wasOnline = new List<DateTime>(){
                 DateTime.ParseExact("2023-10-10-12:00", "yyyy-dd-MM-HH:mm", null),
                 DateTime.ParseExact("2023-11-10-12:00", "yyyy-dd-MM-HH:mm", null) }},
             new User { userId = "4", periodsOnline = new List<PeriodOnline>{
@@ -264,7 +264,7 @@ namespace FSEProject2.Tests
                     users = new List<string> { "4" }
                 }
             };
-            
+
 
             Data.Users = new List<User> {
             new User { userId = "4", periodsOnline = new List<PeriodOnline>{

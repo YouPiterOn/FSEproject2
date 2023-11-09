@@ -13,7 +13,7 @@ namespace FSEProject2.Controllers.Tests
     [TestClass()]
     public class PredictionsControllerTests
     {
-        private List<User> sampleData = new List<User>
+        private readonly List<User> sampleData = new List<User>
         {
             new User {userId = "1", wasOnline = new List<DateTime>(){ DateTime.ParseExact("2023-10-10-12:00", "yyyy-dd-MM-HH:mm", null),
                                                                       DateTime.ParseExact("2023-17-10-12:00", "yyyy-dd-MM-HH:mm", null) } },

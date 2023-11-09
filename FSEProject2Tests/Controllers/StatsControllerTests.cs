@@ -13,7 +13,7 @@ namespace FSEProject2.Controllers.Tests
     [TestClass()]
     public class StatsControllerTests
     {
-        private List<User> sampleData = new List<User>
+        private readonly List<User> sampleData = new List<User>
         {
             new User { userId = "1", wasOnline = new List<DateTime>(){ DateTime.ParseExact("2023-01-01-12:00", "yyyy-dd-MM-HH:mm", null) } },
             new User { userId = "2", wasOnline = new List<DateTime>(){ DateTime.ParseExact("2023-01-01-12:00", "yyyy-dd-MM-HH:mm", null) } },
@@ -46,8 +46,8 @@ namespace FSEProject2.Controllers.Tests
             Data.Users = sampleData;
 
             var result = test.GetUsersOnline("2023-01-01-13:00");
-            
-            Assert.IsNotNull (result.Value);
+
+            Assert.IsNotNull(result.Value);
             Assert.IsNull(result.Value.usersOnline);
         }
 
@@ -113,7 +113,7 @@ namespace FSEProject2.Controllers.Tests
 
             var result = test.GetUserTimeData("3");
 
-           Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
         }
 
         [TestMethod()]

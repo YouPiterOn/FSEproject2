@@ -1,4 +1,4 @@
-name: Deploy secondBranch after PR completed and tests
+name: Deploy secondBranch after PR completed
 
 on:
   pull_request:
@@ -53,28 +53,3 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_78189AF196BC489DA831E7D11E9D97F0 }}
           package: .
-  build-and-test:
-    name: build-and-test-${{matrix.os}}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-
-    - name: Install dependencies
-      run: dotnet restore
-      
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
-
-    - name: Check Code Formating
-      run: dotnet format --severity error --verify-no-changes

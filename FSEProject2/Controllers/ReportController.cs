@@ -21,7 +21,7 @@ namespace FSEProject2.Controllers
             return response;
         }
         [HttpGet("report/{name}")]
-        public ActionResult<Report> GetReport(string name, string from, string to) 
+        public ActionResult<Report> GetReport(string name, string from, string to)
         {
             var actualFrom = DateTime.ParseExact(from, "yyyy-dd-MM-HH:mm", CultureInfo.InvariantCulture);
             var actualTo = DateTime.ParseExact(to, "yyyy-dd-MM-HH:mm", CultureInfo.InvariantCulture);

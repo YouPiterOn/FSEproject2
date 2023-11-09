@@ -9,14 +9,14 @@ namespace FSEProject2
         public static HistoricalData GetUsersOnline(DateTime date)
         {
             List<DateTime> onlineData = new List<DateTime>();
-			foreach(var wasOnline in Data.Users.Select(user => user.wasOnline))
-			{
-				if (wasOnline == null) continue;
-				foreach (var dateOnline in wasOnline)
-					onlineData.Add(dateOnline);
-			}
+            foreach (var wasOnline in Data.Users.Select(user => user.wasOnline))
+            {
+                if (wasOnline == null) continue;
+                foreach (var dateOnline in wasOnline)
+                    onlineData.Add(dateOnline);
+            }
 
-			var usersCount = onlineData.FindAll(x => x == date).Count;
+            var usersCount = onlineData.FindAll(x => x == date).Count;
             if (usersCount == 0) return new HistoricalData { usersOnline = null };
             return new HistoricalData { usersOnline = usersCount };
         }
@@ -37,7 +37,7 @@ namespace FSEProject2
             {
                 wasUserOnline = true;
             }
-            else 
+            else
             {
                 wasUserOnline = false;
 
@@ -47,10 +47,10 @@ namespace FSEProject2
             return new UserHistoricalData { wasUserOnline = wasUserOnline, nearestOnlineTime = nearestOnlineTime };
         }
 
-        public static UserTimeData? GetUserTimeData(string userId) 
+        public static UserTimeData? GetUserTimeData(string userId)
         {
             var user = Data.Users.Find(u => u.userId == userId);
-            if (user == null) 
+            if (user == null)
             {
                 return null;
             }

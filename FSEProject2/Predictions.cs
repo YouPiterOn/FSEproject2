@@ -25,7 +25,6 @@ namespace FSEProject2
 
         public static UserPredictionData? PredictUserOnline(DateTime date, double tolerance, string userId)
         {
-
             var user = Data.Users.Find(u => u.userId == userId);
 
             if (user == null || user.wasOnline == null) return null;

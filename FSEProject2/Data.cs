@@ -16,5 +16,5 @@ namespace FSEProject2
 #pragma warning restore S2223 // Non-constant static fields should not be visible
 #pragma warning restore S1104 // Fields should not have public accessibility
 #pragma warning restore S2386 // Mutable fields should not be "public static"
-	}
+    }
 }

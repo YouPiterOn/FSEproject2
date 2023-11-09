@@ -13,7 +13,7 @@ namespace FSEProject2.Controllers.Tests
     [TestClass()]
     public class UserControllerTests
     {
-        private List<User> sampleData = new List<User>
+        private readonly List<User> sampleData = new List<User>
         {
             new User { userId = "1" },
         };
@@ -33,8 +33,8 @@ namespace FSEProject2.Controllers.Tests
         }
 
         [TestMethod()]
-        public void Forget_NotFound() 
-        { 
+        public void Forget_NotFound()
+        {
             var test = new UserController();
             Data.Users = sampleData;
 

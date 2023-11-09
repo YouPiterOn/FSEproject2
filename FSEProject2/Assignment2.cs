@@ -118,7 +118,7 @@ namespace FSEProject2
         {
             var Language = GetLanguage();
             string apiUrl = "https://sef.podkolzin.consulting/api/users/lastSeen?offset=";
-            var offset = 0; 
+            var offset = 0;
             var allData = new AllData() { data = new List<User>() };
             while (true)
             {

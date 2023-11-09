@@ -63,9 +63,9 @@
     }
     public class FirstSeen
     {
-        public string? username { get; set;}
+        public string? username { get; set; }
         public string? userId { get; set; }
-        public DateTime? firstSeen { get; set;}
-    }   
+        public DateTime? firstSeen { get; set; }
+    }
 }
 
