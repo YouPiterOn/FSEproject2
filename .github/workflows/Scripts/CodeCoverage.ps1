@@ -1,6 +1,6 @@
 param(
     [string]$coverageThreshold = "0.7",
-    [string]$coverageXml = "coverage.cobertura.xml"
+    [string]$coverageXml = "merged.cobertura.xml"
 )
 
 if (Test-Path $coverageXml) {
