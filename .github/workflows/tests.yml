@@ -26,12 +26,27 @@ jobs:
 
     - name: Install dependencies
       run: dotnet restore
-
+    - name: Install dotnet-coverage
+      run: dotnet tool install -g dotnet-coverage
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test --no-restore --verbosity normal --collect:"XPlat Code Coverage"
+
+    - name: Build Coverage Report
+      run: reportgenerator -reports:"coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+            name: coverage-artifacts
+            path: coveragereport/
+    - name: Calculate Code Coverage Percentage with PowerShell
+      shell: pwsh
+      run: ${{ env.Scripts }}/CodeCoverage.ps1
+      env:
+          COVERAGE_THRESHOLD: $coverageThreshold
+
   code-format:
     runs-on: ubuntu-latest
       
