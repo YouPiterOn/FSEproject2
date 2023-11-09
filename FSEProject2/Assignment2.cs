@@ -7,7 +7,7 @@ using FSEProject2.Models;
 
 namespace FSEProject2
 {
-    public static class Assignment2 
+    public static class Assignment2
     {
         private static Dictionary<string, Dictionary<string, string>> Languages = new Dictionary<string, Dictionary<string, string>>
         {

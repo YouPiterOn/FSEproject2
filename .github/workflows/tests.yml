@@ -28,6 +28,8 @@ jobs:
       run: dotnet restore
     - name: Install dotnet-coverage
       run: dotnet tool install -g dotnet-coverage
+    - name: Install ReportGenerator
+      run: dotnet tool install -g dotnet-reportgenerator-globaltool
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
