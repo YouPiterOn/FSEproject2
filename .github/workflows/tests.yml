@@ -36,8 +36,8 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal --collect:"XPlat Code Coverage"
 
-    - name: Build Coverage Report
-      run: reportgenerator -reports:"coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+   # - name: Build Coverage Report
+   #   run: reportgenerator -reports:"coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with:
